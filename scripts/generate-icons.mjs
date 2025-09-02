@@ -6,7 +6,7 @@ import sharp from 'sharp'
 const rootDir = process.cwd()
 const svgPath = path.join(rootDir, 'app', 'icon.svg')
 const outDir = path.join(rootDir, 'public', 'icons')
-const sizes = [16, 32, 180, 192, 256, 384, 512]
+const sizes = [16, 32, 48, 180, 192, 256, 384, 512]
 
 async function ensureDir(dir) {
   await mkdir(dir, { recursive: true })
@@ -21,6 +21,13 @@ async function generate() {
     await writeFile(file, png)
     console.log(`Wrote ${file}`)
   }
+  // Write favicon.ico from 16/32/48 PNGs
+  const icoBuffer = await sharp(svg)
+    .resize(48, 48, { fit: 'cover' })
+    .png()
+    .toBuffer()
+  await writeFile(path.join(rootDir, 'public', 'favicon.ico'), icoBuffer)
+  console.log('Wrote public/favicon.ico')
 }
 
 generate().catch((err) => {
